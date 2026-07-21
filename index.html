@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,318 +8,353 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100">
 
-<div class="max-w-7xl mx-auto p-5">
+    <div class="max-w-7xl mx-auto p-5">
 
-    <h1 class="text-3xl font-bold mb-6">
-        Job Application Tracker
-    </h1>
+        <h1 class="text-3xl font-bold mb-6">
+            Job Application Tracker
+        </h1>
 
-    <!-- FORM -->
+        <!-- FORM -->
 
-    <div class="bg-white rounded-lg shadow p-5">
+        <div class="bg-white rounded-lg shadow p-5">
 
-        <div class="grid md:grid-cols-2 gap-4">
+            <div class="grid md:grid-cols-2 gap-4">
 
-            <input
-                id="company"
-                type="text"
-                placeholder="Company"
-                class="border rounded p-2 w-full">
+                <input id="company" type="text" placeholder="Company" class="border rounded p-2 w-full">
 
-            <input
-                id="jobTitle"
-                type="text"
-                placeholder="Job Title"
-                class="border rounded p-2 w-full">
+                <input id="jobTitle" type="text" placeholder="Job Title" class="border rounded p-2 w-full">
 
-            <select
-                id="status"
-                class="border rounded p-2">
+                <select id="status" class="border rounded p-2">
 
-                <option>Applied</option>
-                <option>Interview</option>
-                <option>Exam</option>
-                <option>Offer</option>
-                <option>Rejected</option>
+                    <option>Applied</option>
+                    <option>Interview</option>
+                    <option>Exam</option>
+                    <option>Offer</option>
+                    <option>Rejected</option>
 
-            </select>
+                </select>
 
-            <input
-                id="remarks"
-                type="text"
-                placeholder="Remarks"
-                class="border rounded p-2">
+                <input id="remarks" type="text" placeholder="Remarks" class="border rounded p-2">
+
+            </div>
+
+            <textarea id="notes" rows="3" placeholder="Notes / Comments"
+                class="border rounded p-2 w-full mt-4"></textarea>
+
+            <button onclick="saveJob()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded mt-4">
+
+                Save
+
+            </button>
 
         </div>
 
-        <textarea
-            id="notes"
-            rows="3"
-            placeholder="Notes / Comments"
-            class="border rounded p-2 w-full mt-4"></textarea>
+        <!-- Desktop Table -->
+        <div class="hidden md:block bg-white rounded-lg shadow mt-8 overflow-x-auto">
 
-        <button
-            onclick="saveJob()"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded mt-4">
+            <table class="min-w-full">
 
-            Save
+                <thead class="bg-gray-200">
 
-        </button>
+                    <tr>
 
-    </div>
+                        <th class="p-3 text-left">Company</th>
+                        <th class="p-3 text-left">Job Title</th>
+                        <th class="p-3 text-left">Status</th>
+                        <th class="p-3 text-left">Remarks</th>
+                        <th class="p-3 text-left">Notes</th>
+                        <th class="p-3 text-center">Action</th>
 
-    <!-- TABLE -->
+                    </tr>
 
-    <div class="bg-white rounded-lg shadow mt-8 overflow-x-auto">
+                </thead>
 
-        <table class="min-w-full">
+                <tbody id="tableBody"></tbody>
 
-            <thead class="bg-gray-200">
+            </table>
 
-            <tr>
+        </div>
 
-                <th class="p-3 text-left">Company</th>
-                <th class="p-3 text-left">Job Title</th>
-                <th class="p-3 text-left">Status</th>
-                <th class="p-3 text-left">Remarks</th>
-                <th class="p-3 text-left">Notes</th>
-                <th class="p-3 text-center">Action</th>
-
-            </tr>
-
-            </thead>
-
-            <tbody id="tableBody"></tbody>
-
-        </table>
+        <!-- Mobile Cards -->
+        <div id="mobileCards" class="md:hidden mt-6 space-y-4">
+        </div>
 
     </div>
 
-</div>
+    <script>
 
-<script>
+        let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
 
-let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+        let editIndex = null;
 
-let editIndex = null;
 
+        //============================
+        // Save
+        //============================
 
-//============================
-// Save
-//============================
+        function saveJob() {
 
-function saveJob(){
+            const company = document.getElementById("company").value;
+            const jobTitle = document.getElementById("jobTitle").value;
+            const status = document.getElementById("status").value;
+            const remarks = document.getElementById("remarks").value;
+            const notes = document.getElementById("notes").value;
 
-    const company = document.getElementById("company").value;
-    const jobTitle = document.getElementById("jobTitle").value;
-    const status = document.getElementById("status").value;
-    const remarks = document.getElementById("remarks").value;
-    const notes = document.getElementById("notes").value;
+            if (company === "" || jobTitle === "") {
 
-    if(company === "" || jobTitle === ""){
+                alert("Company and Job Title are required.");
+                return;
 
-        alert("Company and Job Title are required.");
-        return;
+            }
 
-    }
+            const job = {
 
-    const job = {
+                company,
+                jobTitle,
+                status,
+                remarks,
+                notes
 
-        company,
-        jobTitle,
-        status,
-        remarks,
-        notes
+            };
 
-    };
+            if (editIndex === null) {
 
-    if(editIndex === null){
+                jobs.push(job);
 
-        jobs.push(job);
+            } else {
+
+                jobs[editIndex] = job;
+                editIndex = null;
+
+            }
+
+            saveLocalStorage();
+
+            clearForm();
+
+            render();
+
+        }
+
+
+        //============================
+        // Render All
+        //============================
+
+        function render() {
+
+            const tbody = document.getElementById("tableBody");
+            const mobileCards = document.getElementById("mobileCards");
+
+            tbody.innerHTML = "";
+            mobileCards.innerHTML = "";
+
+            jobs.forEach((job, index) => {
+
+                tbody.innerHTML += renderTable(job, index);
+
+                mobileCards.innerHTML += renderCard(job, index);
+
+            });
+        }
+
+        //============================
+        // Desktop Table
+        //============================
+
+        function renderTable(job, index) {
+            return `
+                <tr class="border-b hover:bg-gray-50 transition">
+                    <td class="p-3 font-medium">
+                        ${job.company}
+                    </td>
+                    <td class="p-3">
+                        ${job.jobTitle}
+                    </td>
+                    <td class="p-3">
+                        <span class="px-3 py-1 rounded-full text-sm text-white ${statusColor(job.status)}">
+                            ${job.status}
+                        </span>
+                    </td>
+                    <td class="p-3">
+                        ${job.remarks || "-"}
+                    </td>
+                    <td class="p-3">
+                        ${job.notes || "-"}
+                    </td>
+                    <td class="p-3">
+                        <div class="flex justify-center gap-2">
+                            <button
+                                onclick="editJob(${index})"
+                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">
+                                Edit
+                            </button>
+                            <button
+                                onclick="deleteJob(${index})"
+                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+        }
+
+
+        //============================
+        // Mobile Card
+        //============================
+
+        function renderCard(job, index) {
+            return `
+                <div class="bg-white rounded-xl shadow p-4 border">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="font-bold text-lg">
+                                ${job.company}
+                            </h2>
+                            <p class="text-gray-500">
+                                ${job.jobTitle}
+                            </p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-medium text-white ${statusColor(job.status)}">
+                            ${job.status}
+                        </span>
+                    </div>
+                    <div class="mt-4 space-y-3">
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase">
+                                Remarks
+                            </p>
+                            <p class="text-sm">
+                                ${job.remarks || "-"}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase">
+                                Notes
+                            </p>
+                            <p class="text-sm whitespace-pre-wrap">${job.notes || "-"}</p>
+                        </div>
+
+                    </div>
+                    <div class="flex gap-3 mt-5">
+                        <button
+                            onclick="editJob(${index})"
+                            class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded">
+                            Edit
+                        </button>
+                        <button
+                            onclick="deleteJob(${index})"
+                            class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded">
+                            Delete
+                        </button>
+                    </div>
+                </div>`;
+        }
 
-    }else{
 
-        jobs[editIndex] = job;
-        editIndex = null;
+        //============================
+        // Edit
+        //============================
 
-    }
+        function editJob(index) {
 
-    saveLocalStorage();
+            const job = jobs[index];
 
-    clearForm();
+            document.getElementById("company").value = job.company;
+            document.getElementById("jobTitle").value = job.jobTitle;
+            document.getElementById("status").value = job.status;
+            document.getElementById("remarks").value = job.remarks;
+            document.getElementById("notes").value = job.notes;
 
-    render();
+            editIndex = index;
 
-}
+        }
 
 
-//============================
-// Render Table
-//============================
+        //============================
+        // Delete
+        //============================
 
-function render(){
+        function deleteJob(index) {
 
-    const tbody = document.getElementById("tableBody");
+            if (confirm("Delete this record?")) {
 
-    tbody.innerHTML = "";
+                jobs.splice(index, 1);
 
-    jobs.forEach((job,index)=>{
+                saveLocalStorage();
 
-        tbody.innerHTML += `
+                render();
 
-        <tr class="border-b">
+            }
 
-            <td class="p-3">${job.company}</td>
+        }
 
-            <td class="p-3">${job.jobTitle}</td>
 
-            <td class="p-3">
+        //============================
+        // Save LocalStorage
+        //============================
 
-                <span class="px-3 py-1 rounded text-white ${statusColor(job.status)}">
+        function saveLocalStorage() {
 
-                    ${job.status}
+            localStorage.setItem("jobs", JSON.stringify(jobs));
 
-                </span>
+        }
 
-            </td>
 
-            <td class="p-3">${job.remarks}</td>
+        //============================
+        // Clear Form
+        //============================
 
-            <td class="p-3">${job.notes}</td>
+        function clearForm() {
 
-            <td class="p-3">
+            document.getElementById("company").value = "";
+            document.getElementById("jobTitle").value = "";
+            document.getElementById("status").value = "Applied";
+            document.getElementById("remarks").value = "";
+            document.getElementById("notes").value = "";
 
-                <div class="flex gap-2 justify-center">
+        }
 
-                    <button
-                        onclick="editJob(${index})"
-                        class="bg-yellow-500 text-white px-3 py-1 rounded">
 
-                        Edit
+        //============================
+        // Badge Color
+        //============================
 
-                    </button>
+        function statusColor(status) {
 
-                    <button
-                        onclick="deleteJob(${index})"
-                        class="bg-red-500 text-white px-3 py-1 rounded">
+            switch (status) {
 
-                        Delete
+                case "Applied":
+                    return "bg-blue-500";
 
-                    </button>
+                case "Interview":
+                    return "bg-yellow-500";
 
-                </div>
+                case "Exam":
+                    return "bg-purple-500";
 
-            </td>
+                case "Offer":
+                    return "bg-green-600";
 
-        </tr>
+                case "Rejected":
+                    return "bg-red-600";
 
-        `;
+                default:
+                    return "bg-gray-500";
 
-    });
+            }
 
-}
+        }
 
-
-//============================
-// Edit
-//============================
-
-function editJob(index){
-
-    const job = jobs[index];
-
-    document.getElementById("company").value = job.company;
-    document.getElementById("jobTitle").value = job.jobTitle;
-    document.getElementById("status").value = job.status;
-    document.getElementById("remarks").value = job.remarks;
-    document.getElementById("notes").value = job.notes;
-
-    editIndex = index;
-
-}
-
-
-//============================
-// Delete
-//============================
-
-function deleteJob(index){
-
-    if(confirm("Delete this record?")){
-
-        jobs.splice(index,1);
-
-        saveLocalStorage();
 
         render();
 
-    }
-
-}
-
-
-//============================
-// Save LocalStorage
-//============================
-
-function saveLocalStorage(){
-
-    localStorage.setItem("jobs",JSON.stringify(jobs));
-
-}
-
-
-//============================
-// Clear Form
-//============================
-
-function clearForm(){
-
-    document.getElementById("company").value="";
-    document.getElementById("jobTitle").value="";
-    document.getElementById("status").value="Applied";
-    document.getElementById("remarks").value="";
-    document.getElementById("notes").value="";
-
-}
-
-
-//============================
-// Badge Color
-//============================
-
-function statusColor(status){
-
-    switch(status){
-
-        case "Applied":
-            return "bg-blue-500";
-
-        case "Interview":
-            return "bg-yellow-500";
-
-        case "Exam":
-            return "bg-purple-500";
-
-        case "Offer":
-            return "bg-green-600";
-
-        case "Rejected":
-            return "bg-red-600";
-
-        default:
-            return "bg-gray-500";
-
-    }
-
-}
-
-
-render();
-
-</script>
+    </script>
 
 </body>
+
 </html>
