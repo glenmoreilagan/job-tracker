@@ -7,69 +7,94 @@
     <title>Job Application Tracker</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-white text-gray-800">
 
-    <div class="max-w-7xl mx-auto p-5">
+    <div class="max-w-5xl mx-auto p-4 md:p-8">
 
-        <h1 class="text-3xl font-bold mb-6">
-            Job Application Tracker
-        </h1>
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-2xl md:text-3xl font-semibold text-gray-900">Job Application Tracker</h1>
+            <p class="text-sm text-gray-500 mt-1">Keep track of every application in one place.</p>
+        </header>
+
+        <!-- Status Dashboard -->
+        <div id="statusDashboard" class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+            <!-- filled by JS -->
+        </div>
 
         <!-- FORM -->
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 md:p-6 mb-8">
 
-        <div class="bg-white rounded-lg shadow p-5">
+            <h2 class="text-base font-semibold text-gray-900 mb-4">Add application</h2>
 
-            <div class="grid md:grid-cols-2 gap-4">
+            <div class="grid gap-4 md:grid-cols-2">
 
-                <input id="company" type="text" placeholder="Company" class="border rounded p-2 w-full">
+                <div>
+                    <label for="company" class="block text-xs font-medium text-gray-500 mb-1">Company</label>
+                    <input id="company" type="text" placeholder="e.g. Acme Inc."
+                        class="border border-gray-200 rounded-lg p-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
 
-                <input id="jobTitle" type="text" placeholder="Job Title" class="border rounded p-2 w-full">
+                <div>
+                    <label for="jobTitle" class="block text-xs font-medium text-gray-500 mb-1">Job Title</label>
+                    <input id="jobTitle" type="text" placeholder="e.g. Frontend Developer"
+                        class="border border-gray-200 rounded-lg p-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
 
-                <select id="status" class="border rounded p-2">
+                <div>
+                    <label for="status" class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                    <select id="status"
+                        class="border border-gray-200 rounded-lg p-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option>Applied</option>
+                        <option>Interview</option>
+                        <option>Exam</option>
+                        <option>Offer</option>
+                        <option>Rejected</option>
+                    </select>
+                </div>
 
-                    <option>Applied</option>
-                    <option>Interview</option>
-                    <option>Exam</option>
-                    <option>Offer</option>
-                    <option>Rejected</option>
-
-                </select>
-
-                <input id="remarks" type="text" placeholder="Remarks" class="border rounded p-2">
+                <div>
+                    <label for="remarks" class="block text-xs font-medium text-gray-500 mb-1">Remarks</label>
+                    <input id="remarks" type="text" placeholder="e.g. Referred by a friend"
+                        class="border border-gray-200 rounded-lg p-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
 
             </div>
 
-            <textarea id="notes" rows="3" placeholder="Notes / Comments"
-                class="border rounded p-2 w-full mt-4"></textarea>
+            <div class="mt-4">
+                <label for="notes" class="block text-xs font-medium text-gray-500 mb-1">Notes / Comments</label>
+                <textarea id="notes" rows="3" placeholder="Anything worth remembering about this application..."
+                    class="border border-gray-200 rounded-lg p-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
 
-            <button onclick="saveJob()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded mt-4">
-
-                Save
-
+            <button onclick="saveJob()"
+                class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg mt-5 transition-colors">
+                Save application
             </button>
 
         </div>
 
         <!-- Desktop Table -->
-        <div class="hidden md:block bg-white rounded-lg shadow mt-8 overflow-x-auto">
+        <div class="hidden md:block bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
 
-            <table class="min-w-full">
+            <table class="min-w-full text-sm">
 
-                <thead class="bg-gray-200">
-
+                <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-
-                        <th class="p-3 text-left">Company</th>
-                        <th class="p-3 text-left">Job Title</th>
-                        <th class="p-3 text-left">Status</th>
-                        <th class="p-3 text-left">Remarks</th>
-                        <th class="p-3 text-left">Notes</th>
-                        <th class="p-3 text-center">Action</th>
-
+                        <th class="p-3 text-left font-medium text-gray-500">Company</th>
+                        <th class="p-3 text-left font-medium text-gray-500">Job Title</th>
+                        <th class="p-3 text-left font-medium text-gray-500">Status</th>
+                        <th class="p-3 text-left font-medium text-gray-500">Remarks</th>
+                        <th class="p-3 text-left font-medium text-gray-500">Notes</th>
+                        <th class="p-3 text-center font-medium text-gray-500">Action</th>
                     </tr>
-
                 </thead>
 
                 <tbody id="tableBody"></tbody>
@@ -79,7 +104,12 @@
         </div>
 
         <!-- Mobile Cards -->
-        <div id="mobileCards" class="md:hidden mt-6 space-y-4">
+        <div id="mobileCards" class="md:hidden space-y-3">
+        </div>
+
+        <!-- Empty state -->
+        <div id="emptyState" class="hidden text-center py-16 border border-dashed border-gray-200 rounded-xl mt-4">
+            <p class="text-gray-400 text-sm">No applications yet. Add your first one above.</p>
         </div>
 
     </div>
@@ -89,6 +119,17 @@
         let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
 
         let editIndex = null;
+
+        const STATUSES = ["Applied", "Interview", "Exam", "Offer", "Rejected"];
+
+        // Simple stroke icons per status (24x24 viewbox, currentColor)
+        const ICONS = {
+            Applied: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>`,
+            Interview: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+            Exam: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
+            Offer: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>`,
+            Rejected: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>`
+        };
 
 
         //============================
@@ -148,9 +189,16 @@
 
             const tbody = document.getElementById("tableBody");
             const mobileCards = document.getElementById("mobileCards");
+            const emptyState = document.getElementById("emptyState");
 
             tbody.innerHTML = "";
             mobileCards.innerHTML = "";
+
+            if (jobs.length === 0) {
+                emptyState.classList.remove("hidden");
+            } else {
+                emptyState.classList.add("hidden");
+            }
 
             jobs.forEach((job, index) => {
 
@@ -159,7 +207,36 @@
                 mobileCards.innerHTML += renderCard(job, index);
 
             });
+
+            renderDashboard();
         }
+
+
+        //============================
+        // Status Dashboard
+        //============================
+
+        function renderDashboard() {
+
+            const dashboard = document.getElementById("statusDashboard");
+            dashboard.innerHTML = "";
+
+            STATUSES.forEach(status => {
+
+                const count = jobs.filter(j => j.status === status).length;
+
+                dashboard.innerHTML += `
+                    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-blue-600">${ICONS[status]}</span>
+                            <span class="text-2xl font-semibold text-gray-900">${count}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">${status}</p>
+                    </div>`;
+
+            });
+        }
+
 
         //============================
         // Desktop Table
@@ -167,34 +244,34 @@
 
         function renderTable(job, index) {
             return `
-                <tr class="border-b hover:bg-gray-50 transition">
-                    <td class="p-3 font-medium">
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="p-3 font-medium text-gray-900">
                         ${job.company}
                     </td>
-                    <td class="p-3">
+                    <td class="p-3 text-gray-600">
                         ${job.jobTitle}
                     </td>
                     <td class="p-3">
-                        <span class="px-3 py-1 rounded-full text-sm text-white ${statusColor(job.status)}">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${statusBadge(job.status)}">
                             ${job.status}
                         </span>
                     </td>
-                    <td class="p-3">
+                    <td class="p-3 text-gray-600">
                         ${job.remarks || "-"}
                     </td>
-                    <td class="p-3">
+                    <td class="p-3 text-gray-600">
                         ${job.notes || "-"}
                     </td>
                     <td class="p-3">
                         <div class="flex justify-center gap-2">
                             <button
                                 onclick="editJob(${index})"
-                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">
+                                class="border border-gray-200 hover:bg-gray-50 text-gray-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
                                 Edit
                             </button>
                             <button
                                 onclick="deleteJob(${index})"
-                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+                                class="border border-gray-200 hover:bg-red-50 hover:text-red-600 text-gray-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
                                 Delete
                             </button>
                         </div>
@@ -209,46 +286,46 @@
 
         function renderCard(job, index) {
             return `
-                <div class="bg-white rounded-xl shadow p-4 border">
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h2 class="font-bold text-lg">
+                            <h2 class="font-semibold text-gray-900">
                                 ${job.company}
                             </h2>
-                            <p class="text-gray-500">
+                            <p class="text-sm text-gray-500">
                                 ${job.jobTitle}
                             </p>
                         </div>
-                        <span class="px-3 py-1 rounded-full text-xs font-medium text-white ${statusColor(job.status)}">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusBadge(job.status)}">
                             ${job.status}
                         </span>
                     </div>
                     <div class="mt-4 space-y-3">
                         <div>
-                            <p class="text-xs text-gray-400 uppercase">
+                            <p class="text-xs text-gray-400 uppercase tracking-wide">
                                 Remarks
                             </p>
-                            <p class="text-sm">
+                            <p class="text-sm text-gray-700">
                                 ${job.remarks || "-"}
                             </p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 uppercase">
+                            <p class="text-xs text-gray-400 uppercase tracking-wide">
                                 Notes
                             </p>
-                            <p class="text-sm whitespace-pre-wrap">${job.notes || "-"}</p>
+                            <p class="text-sm text-gray-700 whitespace-pre-wrap">${job.notes || "-"}</p>
                         </div>
 
                     </div>
-                    <div class="flex gap-3 mt-5">
+                    <div class="flex gap-2 mt-4">
                         <button
                             onclick="editJob(${index})"
-                            class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded">
+                            class="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 py-2 rounded-lg text-sm font-medium transition-colors">
                             Edit
                         </button>
                         <button
                             onclick="deleteJob(${index})"
-                            class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded">
+                            class="flex-1 border border-gray-200 hover:bg-red-50 hover:text-red-600 text-gray-700 py-2 rounded-lg text-sm font-medium transition-colors">
                             Delete
                         </button>
                     </div>
@@ -271,6 +348,8 @@
             document.getElementById("notes").value = job.notes;
 
             editIndex = index;
+
+            document.getElementById("company").scrollIntoView({ behavior: "smooth", block: "center" });
 
         }
 
@@ -321,30 +400,30 @@
 
 
         //============================
-        // Badge Color
+        // Badge Color (soft, tinted badges instead of solid colors)
         //============================
 
-        function statusColor(status) {
+        function statusBadge(status) {
 
             switch (status) {
 
                 case "Applied":
-                    return "bg-blue-500";
+                    return "bg-blue-50 text-blue-700";
 
                 case "Interview":
-                    return "bg-yellow-500";
+                    return "bg-amber-50 text-amber-700";
 
                 case "Exam":
-                    return "bg-purple-500";
+                    return "bg-purple-50 text-purple-700";
 
                 case "Offer":
-                    return "bg-green-600";
+                    return "bg-green-50 text-green-700";
 
                 case "Rejected":
-                    return "bg-red-600";
+                    return "bg-red-50 text-red-700";
 
                 default:
-                    return "bg-gray-500";
+                    return "bg-gray-50 text-gray-700";
 
             }
 
