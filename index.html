@@ -66,6 +66,18 @@
                         class="border border-gray-200 rounded-lg p-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
+                <div>
+                    <label for="dateApplied" class="block text-xs font-medium text-gray-500 mb-1">Date Applied</label>
+                    <input id="dateApplied" type="date"
+                        class="border border-gray-200 rounded-lg p-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label for="expectedSalary" class="block text-xs font-medium text-gray-500 mb-1">Expected Salary</label>
+                    <input id="expectedSalary" type="number" min="0" step="any" placeholder="e.g. 75000"
+                        class="border border-gray-200 rounded-lg p-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
             </div>
 
             <div class="mt-4">
@@ -82,7 +94,7 @@
         </div>
 
         <!-- Desktop Table -->
-        <div class="hidden md:block bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="hidden md:block bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-auto">
 
             <table class="min-w-full text-sm">
 
@@ -91,6 +103,8 @@
                         <th class="p-3 text-left font-medium text-gray-500">Company</th>
                         <th class="p-3 text-left font-medium text-gray-500">Job Title</th>
                         <th class="p-3 text-left font-medium text-gray-500">Status</th>
+                        <th class="p-3 text-left font-medium text-gray-500">Date Applied</th>
+                        <th class="p-3 text-left font-medium text-gray-500">Expected Salary</th>
                         <th class="p-3 text-left font-medium text-gray-500">Remarks</th>
                         <th class="p-3 text-left font-medium text-gray-500">Notes</th>
                         <th class="p-3 text-center font-medium text-gray-500">Action</th>
@@ -142,6 +156,8 @@
             const jobTitle = document.getElementById("jobTitle").value;
             const status = document.getElementById("status").value;
             const remarks = document.getElementById("remarks").value;
+            const dateApplied = document.getElementById("dateApplied").value;
+            const expectedSalary = document.getElementById("expectedSalary").value;
             const notes = document.getElementById("notes").value;
 
             if (company === "" || jobTitle === "") {
@@ -157,6 +173,8 @@
                 jobTitle,
                 status,
                 remarks,
+                dateApplied,
+                expectedSalary,
                 notes
 
             };
@@ -257,6 +275,12 @@
                         </span>
                     </td>
                     <td class="p-3 text-gray-600">
+                        ${formatDate(job.dateApplied)}
+                    </td>
+                    <td class="p-3 text-gray-600">
+                        ${job.expectedSalary || "-"}
+                    </td>
+                    <td class="p-3 text-gray-600">
                         ${job.remarks || "-"}
                     </td>
                     <td class="p-3 text-gray-600">
@@ -303,6 +327,22 @@
                     <div class="mt-4 space-y-3">
                         <div>
                             <p class="text-xs text-gray-400 uppercase tracking-wide">
+                                Date Applied
+                            </p>
+                            <p class="text-sm text-gray-700">
+                                ${formatDate(job.dateApplied)}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wide">
+                                Expected Salary
+                            </p>
+                            <p class="text-sm text-gray-700">
+                                ${job.expectedSalary || "-"}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wide">
                                 Remarks
                             </p>
                             <p class="text-sm text-gray-700">
@@ -345,6 +385,8 @@
             document.getElementById("jobTitle").value = job.jobTitle;
             document.getElementById("status").value = job.status;
             document.getElementById("remarks").value = job.remarks;
+            document.getElementById("dateApplied").value = job.dateApplied || "";
+            document.getElementById("expectedSalary").value = job.expectedSalary || "";
             document.getElementById("notes").value = job.notes;
 
             editIndex = index;
@@ -394,6 +436,8 @@
             document.getElementById("jobTitle").value = "";
             document.getElementById("status").value = "Applied";
             document.getElementById("remarks").value = "";
+            document.getElementById("dateApplied").value = "";
+            document.getElementById("expectedSalary").value = "";
             document.getElementById("notes").value = "";
 
         }
@@ -402,6 +446,26 @@
         //============================
         // Badge Color (soft, tinted badges instead of solid colors)
         //============================
+
+        function formatDate(date) {
+
+            if (!date) {
+                return "-";
+            }
+
+            const parsedDate = new Date(`${date}T00:00:00`);
+
+            if (Number.isNaN(parsedDate.getTime())) {
+                return "-";
+            }
+
+            return parsedDate.toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric"
+            });
+
+        }
 
         function statusBadge(status) {
 
